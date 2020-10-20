@@ -156,13 +156,13 @@ function assert_envoy_http_rbac_policy_count {
   local HOSTPORT=$1
   local EXPECT_COUNT=$2
 
-  GOT_COUNT=$(get_envoy_http_rbac $HOSTPORT | jq '.rules.policies | length')
+  GOT_COUNT=$(get_envoy_http_rbac_once $HOSTPORT | jq '.rules.policies | length')
   [ "$GOT_COUNT" -eq $EXPECT_COUNT ]
 }
 
-function get_envoy_http_rbac {
+function get_envoy_http_rbac_once {
   local HOSTPORT=$1
-  run retry_default curl -s -f $HOSTPORT/config_dump
+  run curl -s -f $HOSTPORT/config_dump
   [ "$status" -eq 0 ]
   local ENVOY_VERSION=$(echo $output | jq --raw-output '.configs[0].bootstrap.node.metadata.envoy_version')
   local QUERY=''
@@ -180,13 +180,13 @@ function assert_envoy_network_rbac_policy_count {
   local HOSTPORT=$1
   local EXPECT_COUNT=$2
 
-  GOT_COUNT=$(get_envoy_network_rbac $HOSTPORT | jq '.rules.policies | length')
+  GOT_COUNT=$(get_envoy_network_rbac_once $HOSTPORT | jq '.rules.policies | length')
   [ "$GOT_COUNT" -eq $EXPECT_COUNT ]
 }
 
-function get_envoy_network_rbac {
+function get_envoy_network_rbac_once {
   local HOSTPORT=$1
-  run retry_default curl -s -f $HOSTPORT/config_dump
+  run curl -s -f $HOSTPORT/config_dump
   [ "$status" -eq 0 ]
   local ENVOY_VERSION=$(echo $output | jq --raw-output '.configs[0].bootstrap.node.metadata.envoy_version')
   local QUERY=''
